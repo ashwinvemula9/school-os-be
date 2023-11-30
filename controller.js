@@ -28,85 +28,130 @@ const loginUser = async (req, res) => {
   }
 };
 
-// const getAllPosts = (req, res) => {
-//   const postId = parseInt(req.params.id);
-//   // Replace with your database fetching logic
-//   // Example: const post = yourDatabase.getPostById(postId);
-//   // const post = client.collection("systemadmin").ge;/
-//   const post = {
-//     id: "sd",
-//   };
-//   if (post) {
-//     res.json(post);
-//   } else {
-//     res.status(404).json({ error: "Post not found" });
-//   }
-// };
+const allEntries = async (req, res) => {
+  try {
+    const collectionName = req.params.collection;
+    const database = client.db("school_os");
+    const collection = database.collection(collectionName);
 
-// const getPostById = (req, res) => {
-//   const postId = parseInt(req.params.id);
-//   // Replace with your database fetching logic
-//   // Example: const post = yourDatabase.getPostById(postId);
+    console.log(collectionName);
 
-//   if (post) {
-//     res.json(post);
-//   } else {
-//     res.status(404).json({ error: "Post not found" });
-//   }
-// };
+    // Use findOne to find a single document based on the email
+    const result = await collection.find({}).toArray();
 
-// const createPost = async (req, res) => {
-//   const newPost = req.body;
-//   // Replace with your database creation logic
-//   // Example: const postId = yourDatabase.createPost(newPost);
-//   // const db = client.db("school_os");
-//   const database = client.db("school_os"); // Replace with your actual database name
-//   const collection = database.collection("systemadmin"); // Replace with your actual collection name
-//   const document = { name: "bla bla" };
-//   const result = await collection.insertOne(document);
-//   console.log(client);
-//   // const database = client.db("school_os");
-//   // const collection = database.collection("systemadmin");
+    if (result) {
+      // User found
+      console.log(result);
+      res.status(200).json(result);
+    } else {
+      // User not found
+      console.log("something went wrong");
+      res.status(404).json({ error: "Something went wrong" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-//   // Insert a document
-//   // const result = collection.insertOne({
-//   //   key: "value",
-//   //   // Add your document fields and values here
-//   // });
+const createUser = async (req, res) => {
+  try {
+    const body = req.body;
 
-//   res.status(201).json(result);
-// };
+    const collectionName = req.params.collection;
+    const database = client.db("school_os");
+    const collection = database.collection(`${collectionName}s`);
 
-// const updatePost = (req, res) => {
-//   const postId = parseInt(req.params.id);
-//   const updatedPostData = req.body;
-//   // Replace with your database update logic
-//   // Example: const updatedPost = yourDatabase.updatePost(postId, updatedPostData);
+    console.log(collectionName);
 
-//   if (updatedPost) {
-//     res.json(updatedPost);
-//   } else {
-//     res.status(404).json({ error: "Post not found" });
-//   }
-// };
+    // Use findOne to find a single document based on the email
+    const result = await collection.insertOne(body);
 
-// const deletePost = (req, res) => {
-//   const postId = parseInt(req.params.id);
-//   // Replace with your database delete logic
-//   // Example: const deletedPost = yourDatabase.deletePost(postId);
+    if (result) {
+      // User found
+      console.log(result);
+      res.status(200).json(result);
+    } else {
+      // User not found
+      console.log("something went wrong");
+      res.status(404).json({ error: "Something went wrong" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-//   if (deletedPost) {
-//     res.json(deletedPost);
-//   } else {
-//     res.status(404).json({ error: "Post not found" });
-//   }
-// };
+const getAllAdminsDataOnSys = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const database = client.db("school_os");
+    const collection = database.collection("admins");
+
+    const result = await collection.find({ sys_id: id }).toArray();
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      // User not found
+      console.log("something went wrong");
+      res.status(404).json({ error: "Something went wrong" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getAllTeacherDataOnAdmin = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const database = client.db("school_os");
+    const collection = database.collection("teachers");
+
+    const result = await collection.find({ adminId: id }).toArray();
+    console.log(result);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      // User not found
+      console.log("something went wrong");
+      res.status(404).json({ error: "Something went wrong" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getAllParentDataOnTeacher = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const database = client.db("school_os");
+    const collection = database.collection("parents");
+
+    const result = await collection.find({ teacherId: id }).toArray();
+    console.log(result);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      // User not found
+      console.log("something went wrong");
+      res.status(404).json({ error: "Something went wrong" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
-  // getAllPosts,
-  // getPostById,
-  // createPost,
-  // updatePost,
-  // deletePost,
   loginUser,
+  allEntries,
+  createUser,
+  getAllParentDataOnTeacher,
+  getAllTeacherDataOnAdmin,
+  getAllAdminsDataOnSys,
 };

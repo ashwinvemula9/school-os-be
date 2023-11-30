@@ -12,17 +12,12 @@ app.use(cors());
 // Use middleware to handle JSON data
 app.use(express.json());
 
-// Additional CRUD endpoints using the controller
-app.get("/", (req, res) => {
-  return res.status(200);
-});
 app.post("/api/login", controller.loginUser);
-
-// app.get("/api/posts", controller.getAllPosts);
-// app.get("/api/posts/:id", controller.getPostById);
-// app.post("/api/posts", controller.createPost);
-// app.put("/api/posts/:id", controller.updatePost);
-// app.delete("/api/posts/:id", controller.deletePost);
+app.get("/api/entries/:collection", controller.allEntries);
+app.post("/api/:collection/createuser", controller.createUser);
+app.get("/api/allteachers/:id", controller.getAllTeacherDataOnAdmin);
+app.get("/api/alladmins/:id", controller.getAllAdminsDataOnSys);
+app.get("/api/allparents/:id", controller.getAllParentDataOnTeacher);
 
 // Start Express server
 app.listen(PORT, () => {
